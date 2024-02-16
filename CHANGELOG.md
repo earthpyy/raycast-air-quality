@@ -1,5 +1,6 @@
 # Changelog
 
-## 2024-02-17 - Initial version
+## [Initial version] - 2024-02-17
 
-- Added command to retrieve air quality data from the World Air Quality Index API
+- Added command to retrieve air quality data
+- Added menu bar
