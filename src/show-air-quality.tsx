@@ -192,36 +192,28 @@ export default function Command() {
 
   return (
     <List isLoading={isLoading}>
-      <List.Section title="Current">
-        <List.Item
-          key="test"
-          icon={Icon.StarCircle}
-          title="AQI"
-          subtitle={data.aqi.toString()}
-          accessories={[
-            {
-              icon: `levels/${pollution.level}.png`,
-              text: pollution.levelName,
-              tooltip: pollution.implication,
-            },
-          ]}
-          actions={defaultAction}
-        />
-        <List.Item
-          key="station"
-          icon={Icon.Building}
-          title="Station"
-          subtitle={data.city.name}
-          actions={defaultAction}
-        />
-        <List.Item
-          key="updatedTime"
-          icon={Icon.Clock}
-          title="Last Updated"
-          subtitle={updatedTime}
-          actions={defaultAction}
-        />
-      </List.Section>
+      <List.Item
+        key="test"
+        icon={Icon.StarCircle}
+        title="AQI"
+        subtitle={data.aqi.toString()}
+        accessories={[
+          {
+            icon: `levels/${pollution.level}.png`,
+            text: pollution.levelName,
+            tooltip: pollution.implication,
+          },
+        ]}
+        actions={defaultAction}
+      />
+      <List.Item key="station" icon={Icon.Building} title="Station" subtitle={data.city.name} actions={defaultAction} />
+      <List.Item
+        key="updatedTime"
+        icon={Icon.Clock}
+        title="Last Updated"
+        subtitle={updatedTime}
+        actions={defaultAction}
+      />
       <List.Section title="Forecast">
         {data.forecast.daily.pm25
           .map((record) => ({
@@ -249,6 +241,21 @@ export default function Command() {
               />
             );
           })}
+      </List.Section>
+      <List.Section title="Attribution">
+        {data.attributions.map((attribution) => (
+          <List.Item
+            key={attribution.name}
+            icon={Icon.Info}
+            title={attribution.name}
+            subtitle={attribution.url}
+            actions={
+              <ActionPanel>
+                <Action.OpenInBrowser title="Open in Browser" url={attribution.url} />
+              </ActionPanel>
+            }
+          />
+        ))}
       </List.Section>
     </List>
   );
