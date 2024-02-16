@@ -1,4 +1,4 @@
-import { Action, ActionPanel, getPreferenceValues, Icon, List, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Detail, getPreferenceValues, Icon, List, openExtensionPreferences } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -116,10 +116,7 @@ const preferences: Preferences = getPreferenceValues();
 async function fetchAirQuality() {
   const response = await axios.get(`https://api.waqi.info/feed/here/?token=${preferences.apiToken}`);
   if (response.status !== 200 || response.data.status !== "ok") {
-    await showToast({
-      style: Toast.Style.Failure,
-      title: "Failed to fetch air quality data",
-    });
+    throw new Error(response.data?.data || "Failed to fetch air quality data");
   }
   return response.data.data as unknown as AirQualityData;
 }
@@ -168,7 +165,20 @@ function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndImplicat
 }
 
 export default function Command() {
-  const { data, isLoading } = useCachedPromise(fetchAirQuality);
+  const { data, error, isLoading } = useCachedPromise(fetchAirQuality);
+
+  if (error) {
+    return (
+      <Detail
+        actions={
+          <ActionPanel>
+            <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
+          </ActionPanel>
+        }
+      />
+    );
+  }
+
   const pollution = getPollutionLevelAndImplication(data?.aqi!);
   const updatedTime = dayjs(data?.time?.iso).fromNow();
 
