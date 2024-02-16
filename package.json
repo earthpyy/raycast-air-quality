@@ -22,8 +22,15 @@
       "type": "password",
       "name": "apiToken",
       "title": "API Token",
-      "description": "API Token for Air Quality API",
+      "description": "API Token from https://aqicn.org/data-platform/token/",
       "required": true
+    },
+    {
+      "type": "textfield",
+      "name": "city",
+      "title": "City/Station",
+      "description": "Name, URL, or id (@1234)",
+      "required": false
     }
   ],
   "dependencies": {
