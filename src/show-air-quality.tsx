@@ -167,7 +167,7 @@ function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndImplicat
 export default function Command() {
   const { data, error, isLoading } = useCachedPromise(fetchAirQuality);
 
-  if (error) {
+  if (error || !data) {
     return (
       <Detail
         actions={
@@ -179,47 +179,77 @@ export default function Command() {
     );
   }
 
-  const pollution = getPollutionLevelAndImplication(data?.aqi!);
-  const updatedTime = dayjs(data?.time?.iso).fromNow();
+  const pollution = getPollutionLevelAndImplication(data.aqi);
+  const updatedTime = dayjs(data.time.iso).fromNow();
 
   const defaultAction = (
     <ActionPanel>
       <ActionPanel.Section>
-        <Action.OpenInBrowser title="Open in Browser" url={data?.city?.url!} />
+        <Action.OpenInBrowser title="Open in Browser" url={data.city.url} />
       </ActionPanel.Section>
     </ActionPanel>
   );
 
   return (
     <List isLoading={isLoading}>
-      <List.Item
-        key="test"
-        icon={Icon.StarCircle}
-        title="AQI"
-        subtitle={data?.aqi?.toString()}
-        accessories={[
-          {
-            icon: `levels/${pollution.level}.png`,
-            text: pollution.levelName,
-            tooltip: pollution.implication,
-          },
-        ]}
-        actions={defaultAction}
-      />
-      <List.Item
-        key="updatedTime"
-        icon={Icon.Clock}
-        title="Last Updated"
-        subtitle={updatedTime}
-        actions={defaultAction}
-      />
-      <List.Item
-        key="station"
-        icon={Icon.Building}
-        title="Station"
-        subtitle={data?.city?.name}
-        actions={defaultAction}
-      />
+      <List.Section title="Current">
+        <List.Item
+          key="test"
+          icon={Icon.StarCircle}
+          title="AQI"
+          subtitle={data.aqi.toString()}
+          accessories={[
+            {
+              icon: `levels/${pollution.level}.png`,
+              text: pollution.levelName,
+              tooltip: pollution.implication,
+            },
+          ]}
+          actions={defaultAction}
+        />
+        <List.Item
+          key="station"
+          icon={Icon.Building}
+          title="Station"
+          subtitle={data.city.name}
+          actions={defaultAction}
+        />
+        <List.Item
+          key="updatedTime"
+          icon={Icon.Clock}
+          title="Last Updated"
+          subtitle={updatedTime}
+          actions={defaultAction}
+        />
+      </List.Section>
+      <List.Section title="Forecast">
+        {data.forecast.daily.pm25
+          .map((record) => ({
+            ...record,
+            date: dayjs(record.day),
+          }))
+          .filter((record) => !dayjs().isAfter(record.date, "day"))
+          .map((record) => {
+            const date = record.date.format("dddd, MMMM D, YYYY");
+            const pollution = getPollutionLevelAndImplication(record.avg);
+
+            return (
+              <List.Item
+                key={date}
+                icon={Icon.Sun}
+                title={date}
+                subtitle={`AQI: ${record.avg}`}
+                accessories={[
+                  {
+                    icon: `levels/${pollution.level}.png`,
+                    text: pollution.levelName,
+                    tooltip: pollution.implication,
+                  },
+                ]}
+              />
+            );
+          })}
+      </List.Section>
     </List>
   );
 }
