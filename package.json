@@ -15,6 +15,12 @@
       "title": "Show Air Quality",
       "description": "Show air quality information",
       "mode": "view"
+    },
+    {
+      "name": "air-quality-menu",
+      "title": "Air Quality Menu Bar",
+      "description": "Show air quality information in the menu bar",
+      "mode": "menu-bar"
     }
   ],
   "preferences": [

@@ -1,4 +1,5 @@
-import { PollutionLevelAndImplication } from "./types";
+import dayjs from "./dayjs";
+import { AirQualityData, PollutionLevelAndImplication } from "./types";
 
 export function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndImplication {
   if (aqi <= 50) {
@@ -41,4 +42,18 @@ export function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndI
       implication: "Health alert: everyone may experience more serious health effects.",
     };
   }
+}
+
+export function getForecastRecords(data: AirQualityData) {
+  return data.forecast.daily.pm25
+    .map((record) => ({
+      ...record,
+      day: dayjs(record.day),
+      pollution: getPollutionLevelAndImplication(record.avg),
+    }))
+    .filter((record) => dayjs().isBefore(record.day, "day"))
+    .map((record) => ({
+      ...record,
+      day: record.day.format("dddd, MMMM D"),
+    }));
 }

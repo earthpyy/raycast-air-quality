@@ -1,11 +1,8 @@
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { Action, ActionPanel, Detail, Icon, List, openExtensionPreferences } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { fetchAirQuality } from "./shared/api";
-import { getPollutionLevelAndImplication } from "./shared/utils";
-
-dayjs.extend(relativeTime);
+import dayjs from "./shared/dayjs";
+import { getForecastRecords, getPollutionLevelAndImplication } from "./shared/utils";
 
 export default function Command() {
   const { data, error, isLoading } = useCachedPromise(fetchAirQuality);
@@ -36,7 +33,6 @@ export default function Command() {
   return (
     <List isLoading={isLoading}>
       <List.Item
-        key="test"
         icon={Icon.StarCircle}
         title="AQI"
         subtitle={data.aqi.toString()}
@@ -49,41 +45,26 @@ export default function Command() {
         ]}
         actions={defaultAction}
       />
-      <List.Item key="station" icon={Icon.Building} title="Station" subtitle={data.city.name} actions={defaultAction} />
-      <List.Item
-        key="updatedTime"
-        icon={Icon.Clock}
-        title="Last Updated"
-        subtitle={updatedTime}
-        actions={defaultAction}
-      />
+      <List.Item icon={Icon.Building} title="Station" subtitle={data.city.name} actions={defaultAction} />
+      <List.Item icon={Icon.Clock} title="Last Updated" subtitle={updatedTime} actions={defaultAction} />
       <List.Section title="Forecast">
-        {data.forecast.daily.pm25
-          .map((record) => ({
-            ...record,
-            date: dayjs(record.day),
-          }))
-          .filter((record) => dayjs().isBefore(record.date, "day"))
-          .map((record) => {
-            const date = record.date.format("dddd, MMMM D, YYYY");
-            const pollution = getPollutionLevelAndImplication(record.avg);
-
-            return (
-              <List.Item
-                key={date}
-                icon={Icon.Sun}
-                title={date}
-                subtitle={`AQI: ${record.avg}`}
-                accessories={[
-                  {
-                    icon: `levels/${pollution.level}.png`,
-                    text: pollution.levelName,
-                    tooltip: pollution.implication,
-                  },
-                ]}
-              />
-            );
-          })}
+        {getForecastRecords(data).map((record) => {
+          return (
+            <List.Item
+              key={record.day}
+              icon={Icon.Sun}
+              title={record.day}
+              subtitle={`AQI: ${record.avg}`}
+              accessories={[
+                {
+                  icon: `levels/${pollution.level}.png`,
+                  text: pollution.levelName,
+                  tooltip: pollution.implication,
+                },
+              ]}
+            />
+          );
+        })}
       </List.Section>
       <List.Section title="Attribution">
         {data.attributions.map((attribution) => (
