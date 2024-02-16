@@ -57,7 +57,6 @@ export default function Command() {
           return (
             <List.Item
               key={record.day}
-              icon={Icon.Sun}
               title={record.day}
               subtitle={`AQI: ${record.avg}`}
               accessories={[
