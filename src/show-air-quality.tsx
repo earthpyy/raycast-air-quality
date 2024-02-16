@@ -220,7 +220,7 @@ export default function Command() {
             ...record,
             date: dayjs(record.day),
           }))
-          .filter((record) => !dayjs().isAfter(record.date, "day"))
+          .filter((record) => dayjs().isBefore(record.date, "day"))
           .map((record) => {
             const date = record.date.format("dddd, MMMM D, YYYY");
             const pollution = getPollutionLevelAndImplication(record.avg);
