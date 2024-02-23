@@ -54,15 +54,17 @@ export function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndI
 }
 
 export function getForecastRecords(data: AirQualityData) {
-  return data.forecast.daily.pm25
-    .map((record) => ({
-      ...record,
-      day: dayjs(record.day),
-      pollution: getPollutionLevelAndImplication(record.avg),
-    }))
-    .filter((record) => dayjs().isBefore(record.day, "day"))
-    .map((record) => ({
-      ...record,
-      day: record.day.format("dddd, MMMM D"),
-    }));
+  return data.forecast
+    ? data.forecast.daily.pm25
+        .map((record) => ({
+          ...record,
+          day: dayjs(record.day),
+          pollution: getPollutionLevelAndImplication(record.avg),
+        }))
+        .filter((record) => dayjs().isBefore(record.day, "day"))
+        .map((record) => ({
+          ...record,
+          day: record.day.format("dddd, MMMM D"),
+        }))
+    : [];
 }
