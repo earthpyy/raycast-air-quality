@@ -1,5 +1,14 @@
+import { AxiosResponse } from "axios";
 import dayjs from "./dayjs";
 import { AirQualityData, PollutionLevelAndImplication } from "./types";
+
+export function extractErrorMessage(response: AxiosResponse): string {
+  if (!response.data) {
+    return response.status !== 200 ? `Error code: ${response.status}` : "Unknown error";
+  }
+
+  return response.data?.msg || response.data?.data || response.data?.data?.msg || "Unknown error";
+}
 
 export function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndImplication {
   if (aqi <= 50) {
