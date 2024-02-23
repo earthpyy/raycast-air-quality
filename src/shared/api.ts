@@ -1,18 +1,10 @@
 import axios from "axios";
 import { getPreferenceValues } from "@raycast/api";
 import { AirQualityData, Preferences } from "./types";
-import { extractErrorMessage } from "./utils";
+import { cleanCityName, extractErrorMessage } from "./utils";
 
 const preferences: Preferences = getPreferenceValues();
-const cityName = preferences.city
-  ? preferences.city
-      .toLowerCase()
-      .replace(/\s/g, "")
-      .replace(/@/g, "A")
-      .replace("https://aqicn.org/city/", "")
-      .replace(/^\//, "")
-      .replace(/\/$/, "")
-  : "here";
+const cityName = cleanCityName(preferences.city);
 
 export async function fetchAirQuality() {
   const response = await axios.get(`https://api.waqi.info/feed/${cityName}/?token=${preferences.apiToken}`);

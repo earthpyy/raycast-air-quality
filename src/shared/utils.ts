@@ -10,6 +10,19 @@ export function extractErrorMessage(response: AxiosResponse): string {
   return response.data?.msg || response.data?.data || response.data?.data?.msg || "Unknown error";
 }
 
+export function cleanCityName(cityName?: string): string {
+  return cityName
+    ? cityName
+        .toLowerCase()
+        .replace(/\s/g, "")
+        .replace(/@/g, "A")
+        .replace("https://aqicn.org/city/", "")
+        .replace("https://aqicn.org/station/", "")
+        .replace(/^\//, "")
+        .replace(/\/$/, "")
+    : "here";
+}
+
 export function getPollutionLevelAndImplication(aqi: number): PollutionLevelAndImplication {
   if (aqi <= 50) {
     return {
