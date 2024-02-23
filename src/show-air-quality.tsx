@@ -14,7 +14,7 @@ export default function Command() {
   if (error || !data) {
     return (
       <Detail
-        markdown={`Failed to load air quality data: ${data || error?.message || "Unknown error"}`}
+        markdown={`Failed to load air quality data: ${error?.message}`}
         actions={
           <ActionPanel>
             <Action
