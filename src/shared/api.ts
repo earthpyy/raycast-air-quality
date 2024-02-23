@@ -14,8 +14,8 @@ const cityName = preferences.city
 
 export async function fetchAirQuality() {
   const response = await axios.get(`https://api.waqi.info/feed/${cityName}/?token=${preferences.apiToken}`);
-  if (response.status !== 200 || response.data.status !== "ok") {
-    throw new Error(response.data?.data || "Failed to fetch air quality data");
+  if (response.status !== 200 || response.data.status !== "ok" || response.data.data?.status === 'error') {
+    throw new Error(response.data?.msg || response.data?.data?.msg || "Failed to fetch air quality data");
   }
   return response.data.data as unknown as AirQualityData;
 }
