@@ -7,9 +7,14 @@ import { getForecastRecords, getPollutionLevelAndImplication } from "./shared/ut
 export default function Command() {
   const { data, error, isLoading } = useCachedPromise(fetchAirQuality);
 
+  if (isLoading) {
+    return <List isLoading={true} searchBarPlaceholder="Loading..." />;
+  }
+
   if (error || !data) {
     return (
       <Detail
+        markdown={`Failed to load air quality data: ${data || error?.message || "Unknown error"}`}
         actions={
           <ActionPanel>
             <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
