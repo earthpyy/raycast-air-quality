@@ -74,6 +74,9 @@ export default function Command() {
             />
           );
         })}
+        {!data.forecast ? (
+          <List.Item icon={Icon.QuestionMarkCircle} title="Unavailable in this station" />
+        ) : null}
       </List.Section>
       <List.Section title="Attribution">
         {data.attributions.map((attribution) => (

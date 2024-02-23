@@ -6,11 +6,12 @@ import { extractErrorMessage } from "./utils";
 const preferences: Preferences = getPreferenceValues();
 const cityName = preferences.city
   ? preferences.city
+      .toLowerCase()
       .replace(/\s/g, "")
+      .replace(/@/g, "A")
       .replace("https://aqicn.org/city/", "")
       .replace(/^\//, "")
       .replace(/\/$/, "")
-      .toLowerCase()
   : "here";
 
 export async function fetchAirQuality() {
